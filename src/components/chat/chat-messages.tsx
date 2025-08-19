@@ -27,60 +27,62 @@ const LoadingBubble = () => (
 );
 
 export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const scrollViewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
+    if (scrollViewportRef.current) {
+        scrollViewportRef.current.scrollTo({
+        top: scrollViewportRef.current.scrollHeight,
         behavior: 'smooth',
       });
     }
   }, [messages, isLoading]);
 
   return (
-    <ScrollArea className="flex-1" viewportRef={scrollAreaRef}>
-      <div className="flex flex-col gap-4 p-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={cn(
-              "flex items-end gap-3",
-              message.role === "user" ? "self-end justify-end" : "self-start"
-            )}
-          >
-            {message.role === "assistant" && (
-              <Avatar className="h-8 w-8 self-start">
-                <AvatarImage src="https://ca.slack-edge.com/T04T04ZC3-U03J15729L5-5127c8a239ef-512" alt="Vasco" />
-                <AvatarFallback>V</AvatarFallback>
-              </Avatar>
-            )}
+    <ScrollArea className="flex-1" viewportRef={scrollViewportRef}>
+      <div className="p-4">
+        <div className="flex flex-col gap-4">
+            {messages.map((message) => (
             <div
-              className={cn(
-                "max-w-md rounded-lg p-3 text-sm md:max-w-xl lg:max-w-2xl",
-                message.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground"
-              )}
+                key={message.id}
+                className={cn(
+                "flex items-end gap-3",
+                message.role === "user" ? "self-end justify-end" : "self-start"
+                )}
             >
-              <ReactMarkdown
-                className="prose prose-sm dark:prose-invert prose-p:m-0 prose-ul:m-0 prose-li:m-0"
-                components={{
-                  ul: ({ node, ...props }) => <ul className="list-disc space-y-1 pl-4" {...props} />,
-                  p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                }}
-              >
-                {message.content}
-              </ReactMarkdown>
-            </div>
-            {message.role === 'user' && (
+                {message.role === "assistant" && (
                 <Avatar className="h-8 w-8 self-start">
-                    <AvatarFallback>TA</AvatarFallback>
+                    <AvatarImage src="https://ca.slack-edge.com/T04T04ZC3-U03J15729L5-5127c8a239ef-512" alt="Vasco" />
+                    <AvatarFallback>V</AvatarFallback>
                 </Avatar>
-            )}
-          </div>
-        ))}
-        {isLoading && <LoadingBubble />}
+                )}
+                <div
+                className={cn(
+                    "max-w-md rounded-lg p-3 text-sm md:max-w-xl lg:max-w-2xl",
+                    message.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-secondary-foreground"
+                )}
+                >
+                <ReactMarkdown
+                    className="prose prose-sm dark:prose-invert prose-p:m-0 prose-ul:m-0 prose-li:m-0"
+                    components={{
+                    ul: ({ node, ...props }) => <ul className="list-disc space-y-1 pl-4" {...props} />,
+                    p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                    }}
+                >
+                    {message.content}
+                </ReactMarkdown>
+                </div>
+                {message.role === 'user' && (
+                    <Avatar className="h-8 w-8 self-start">
+                        <AvatarFallback>TA</AvatarFallback>
+                    </Avatar>
+                )}
+            </div>
+            ))}
+            {isLoading && <LoadingBubble />}
+        </div>
       </div>
     </ScrollArea>
   );
