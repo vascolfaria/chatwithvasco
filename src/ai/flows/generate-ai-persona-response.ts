@@ -147,7 +147,7 @@ Achievement Bank:
 - Senior Product Manager at Swapfiets
 1. Rolled out a route-optimization and smart store scheduling engines that allowed for 23% more appointments per hour
 2. Reduced fraud and debt from 8.3% to 2.5% of the revenue by implementing fraud detection, payment plans and omni-channel payment solutions
-3. Managed an integration with SAP that led to the traceability of assets worth more than 250 M€
+3. Managed an integration with SAP that led to the traceability of assets worth more than 250M EUR
 4. Implemented recurring customer interviews leading to the highest front-line NPS of 7.66 and constantly delivered on initiatives that improved our Service KPIs, exceeding its benchmark targets
 - Product Manager at HUUB
 1. Worked in an M&A process that culminated in the acquisition by AP Moller - Maersk
