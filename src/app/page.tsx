@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { generateAIPersonaResponse } from "@/ai/flows/generate-ai-persona-response";
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { getMessageCount, incrementMessageCount, hasReachedMessageLimit } from "@/lib/cookies";
@@ -11,26 +11,31 @@ export interface Message {
   content: string;
 }
 
+const LIMIT_REACHED_MESSAGE = "Unfortunately I am unable to proceed more with this conversation in order to avoid going bankrupt. If you need any more information feel free to reach out at fariavasco96@gmail.com";
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [messageCount, setMessageCount] = useState(0);
   const [limitReached, setLimitReached] = useState(false);
 
-  useEffect(() => {
+  const checkLimit = useCallback(() => {
     const initialCount = getMessageCount();
-    setMessageCount(initialCount);
-    setLimitReached(hasReachedMessageLimit(initialCount));
-    
+    const isLimitReached = hasReachedMessageLimit(initialCount);
+    setLimitReached(isLimitReached);
+    return isLimitReached;
+  }, []);
+
+  useEffect(() => {
+    checkLimit();
     setMessages([
         {
             id: 'init',
             role: 'assistant',
             content: "Hello! I'm Vasco. I'm a Senior Product Manager with a passion for building user-centric products that solve real-world problems, especially in sustainability and AI. Feel free to ask me anything about my experience."
         }
-    ])
-  }, []);
+    ]);
+  }, [checkLimit]);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
@@ -48,13 +53,22 @@ export default function Home() {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
-
+    
     const newCount = incrementMessageCount();
-    setMessageCount(newCount);
-    if (hasReachedMessageLimit(newCount)) {
+    const isLimitReached = hasReachedMessageLimit(newCount);
+
+    if (isLimitReached) {
         setLimitReached(true);
+        const limitMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: LIMIT_REACHED_MESSAGE
+        };
+        setMessages((prev) => [...prev, limitMessage]);
+        return;
     }
+
+    setIsLoading(true);
     
     try {
       const result = await generateAIPersonaResponse({ question: input });
