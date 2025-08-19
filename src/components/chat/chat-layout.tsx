@@ -11,12 +11,13 @@ interface ChatLayoutProps {
   handleSubmit: (e: React.FormEvent<HTMLFormEvent>) => void;
   isLoading: boolean;
   limitReached: boolean;
+  questionsLeft: number;
 }
 
-export function ChatLayout({ messages, input, handleInputChange, handleSubmit, isLoading, limitReached }: ChatLayoutProps) {
+export function ChatLayout({ messages, input, handleInputChange, handleSubmit, isLoading, limitReached, questionsLeft }: ChatLayoutProps) {
   return (
     <Card className="w-full max-w-4xl h-[95vh] max-h-[800px] flex flex-col shadow-2xl rounded-2xl">
-      <ChatHeader />
+      <ChatHeader questionsLeft={questionsLeft} />
       <ChatMessages messages={messages} isLoading={isLoading} />
       <ChatInput
         input={input}

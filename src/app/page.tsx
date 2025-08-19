@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { generateAIPersonaResponse } from "@/ai/flows/generate-ai-persona-response";
 import { ChatLayout } from "@/components/chat/chat-layout";
-import { getMessageCount, incrementMessageCount, hasReachedMessageLimit } from "@/lib/cookies";
+import { getMessageCount, incrementMessageCount, hasReachedMessageLimit, MAX_MESSAGES_PER_DAY } from "@/lib/cookies";
 
 export interface Message {
   id: string;
@@ -18,11 +18,13 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
+  const [questionsLeft, setQuestionsLeft] = useState(MAX_MESSAGES_PER_DAY);
 
   const checkLimit = useCallback(() => {
     const initialCount = getMessageCount();
     const isLimitReached = hasReachedMessageLimit(initialCount);
     setLimitReached(isLimitReached);
+    setQuestionsLeft(MAX_MESSAGES_PER_DAY - initialCount);
     return isLimitReached;
   }, []);
 
@@ -55,6 +57,7 @@ export default function Home() {
     setInput("");
     
     const newCount = incrementMessageCount();
+    setQuestionsLeft(MAX_MESSAGES_PER_DAY - newCount);
     const isLimitReached = hasReachedMessageLimit(newCount);
 
     if (isLimitReached) {
@@ -100,6 +103,7 @@ export default function Home() {
         handleSubmit={handleSubmit}
         isLoading={isLoading}
         limitReached={limitReached}
+        questionsLeft={questionsLeft}
       />
     </main>
   );

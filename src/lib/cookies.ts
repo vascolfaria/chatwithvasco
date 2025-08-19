@@ -3,7 +3,7 @@
 import { format, isToday, parseISO } from "date-fns";
 
 const COOKIE_NAME = "vAIsco-chat-session";
-const MAX_MESSAGES_PER_DAY = 15;
+export const MAX_MESSAGES_PER_DAY = 15;
 
 interface SessionData {
   count: number;
