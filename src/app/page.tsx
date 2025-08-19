@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { generateAIPersonaResponse } from "@/ai/flows/generate-ai-persona-response";
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { getMessageCount, incrementMessageCount, hasReachedMessageLimit, MAX_MESSAGES_PER_DAY } from "@/lib/cookies";
@@ -19,6 +19,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
   const [questionsLeft, setQuestionsLeft] = useState(MAX_MESSAGES_PER_DAY);
+  const initialized = useRef(false);
 
   const checkLimit = useCallback(() => {
     const initialCount = getMessageCount();
@@ -29,14 +30,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    checkLimit();
-    setMessages([
-        {
-            id: 'init',
-            role: 'assistant',
-            content: "Hello! I'm Vasco. I'm a Senior Product Manager with a passion for building user-centric products that solve real-world problems, especially in sustainability and AI. Feel free to ask me anything about my experience."
-        }
-    ]);
+    if (!initialized.current) {
+        initialized.current = true;
+        checkLimit();
+        setMessages([
+            {
+                id: 'init',
+                role: 'assistant',
+                content: "Hello! I'm Vasco. I'm a Senior Product Manager with a passion for building user-centric products that solve real-world problems, especially in sustainability and AI. Feel free to ask me anything about my experience."
+            }
+        ]);
+    }
   }, [checkLimit]);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +61,7 @@ export default function Home() {
     setInput("");
     
     const newCount = incrementMessageCount();
-    setQuestionsLeft(MAX_MESSAGES_PER_DAY - newCount);
+    setQuestionsLeft(prev => prev - 1);
     const isLimitReached = hasReachedMessageLimit(newCount);
 
     if (isLimitReached) {
