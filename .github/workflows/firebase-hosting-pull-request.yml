@@ -28,7 +28,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: firebase/firebase-action@v1
+      - uses: FirebaseExtended/firebase-action@v1
         with:
           firebase-project-id: ${{ vars.FIREBASE_PROJECT_ID }}
           preview: true
